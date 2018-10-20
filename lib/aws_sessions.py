@@ -31,8 +31,8 @@ class KSession(object):
         try:
             sess = sts.assume_role(RoleArn=arn_str, RoleSessionName=account_id)
         except ClientError as e:  # prob does not have perms to assume
-            print "[!] issue assuming role %s: %s" % (arn_str, str(e))
-            KLog.log("issue assuming role {0}: {1}".format(arn_str, str(e)), "critical")
+            print "[!] issue assuming role %s: %s" % (arn_str, e)
+            KLog.log("issue assuming role {0}: {1}".format(arn_str, e), "critical")
             return None
         # if that works lets save the session
         sessions[account_id] = boto3.Session(

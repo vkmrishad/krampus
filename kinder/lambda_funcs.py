@@ -13,8 +13,8 @@ class Lambda():
         try:
             self.conn = sess.client("lambda", region_name=region)
         except Exception as e:
-            KLog.log("issue connecting to AWS %s" % str(e), "critical")
-            exit("[!] issue connecting to AWS: %s" % str(e))
+            KLog.log("issue connecting to AWS %s" % e, "critical")
+            exit("[!] issue connecting to AWS: %s" % e)
         # get volume reference
         self.func = func_name
         self.region = region
@@ -33,5 +33,5 @@ class Lambda():
             if str(e).find("ResourceNotFoundException") is not -1:
                 KLog.log("could not find function '%s', dequeueing task" % self.func)
             else:
-                KLog.log("could not delete function '%s', unknown error: %s" % str(e), "critical")
+                KLog.log("could not delete function '%s', unknown error: %s" % e, "critical")
             return None

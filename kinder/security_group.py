@@ -61,7 +61,8 @@ class SecurityGroup():
         # so we have to take some extra steps here unfortunately
         elif direction == "egress":
             for rule in self.group.ip_permissions_egress:
-                if rule['FromPort'] == from_port and rule['ToPort'] == to_port and rule['IpProtocol'] == proto and self.hasRange(rule['IpRanges'], cidr_ip):
+                if rule['FromPort'] == from_port and rule['ToPort'] == to_port and \
+                        rule['IpProtocol'] == proto and self.hasRange(rule['IpRanges'], cidr_ip):
                     # good enough for me, remove it from the list
                     self.group.revoke_egress(IpPermissions=[rule])
             # update the permissions

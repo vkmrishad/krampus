@@ -31,7 +31,7 @@ class S3():
                 "Grants": [],
                 "Owner": self.bucket.owner
             }
-        ) # done
+        )  # done
 
     # do some ACL magic to pull access to bucket
     def deleteGrant(self, principal, principal_type, perms):
@@ -60,4 +60,4 @@ class S3():
                 "Grants": acl,
                 "Owner": self.bucket.owner
             }
-        ) # alternate remediation could be changing owner
+        )  # alternate remediation could be changing owner

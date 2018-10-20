@@ -4,10 +4,10 @@
 # [tell a fun krampus tale]
 ###############################################################################
 # TODO:
-    # change all repeatable tasks to raise exception to be re-added instead of
-      # catching exceptions
-    # eventually checks for if a resource exists when pulling by id should
-      # raise specific exception that invalid jobs not re-queued
+# change all repeatable tasks to raise exception to be re-added instead of
+# catching exceptions
+# eventually checks for if a resource exists when pulling by id should
+# raise specific exception that invalid jobs not re-queued
 ###############################################################################
 import time
 import os
@@ -21,17 +21,17 @@ class Krampus():
         # setup some basic things we need
         self.region = region
         self.bucket_name = bucket_name
-        self.key = key # basically the filename
+        self.key = key  # basically the filename
         self.whitelist = whitelist
         self.krampus_role = krampus_role
         # instanitate logger
-        self.klog = KLog(self.bucket_name, "krampus_log_" + str(int(time.time())))
+        self.klog = KLog(self.bucket_name, "krampus_log_".format(time.time()))
         self.kt = KTask(self.region, self.bucket_name, self.klog, self.whitelist, self.krampus_role)
 
     # collect our jobs
     def getTasks(self):
         # ktask is our friend dot ru
-        self.kt.getTasks(self.key) # should populate kt.tasks
+        self.kt.getTasks(self.key)  # should populate kt.tasks
 
     # complete them
     def completeTasks(self):
@@ -43,7 +43,7 @@ class Krampus():
                 # add to deferred tasks to try later
                 self.kt.deferred_tasks.append(task.as_json)
                 # alert that there was an issue
-                KLog.log("could not complete task: %s" % str(e), "critical")
+                KLog.log("could not complete task: %s" % e, "critical")
 
     # update the tasks
     def updateTaskList(self):
@@ -79,7 +79,8 @@ def main(event, context):
     k.updateTaskList()
     # save the log file
     k.klog.writeLogFile()
-    print "[+] krampus is done sowing death and destruction in AWS... until next time!"
+    print
+    "[+] krampus is done sowing death and destruction in AWS... until next time!"
 
 
 if __name__ == "__main__":

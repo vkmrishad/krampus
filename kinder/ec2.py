@@ -15,8 +15,8 @@ class EC2():
         try:
             self.conn = sess.resource("ec2", region)
         except Exception as e:
-            KLog.log("issue connecting to AWS %s" % str(e), "critical")
-            exit("[!] issue connecting to AWS: %s" % str(e))
+            KLog.log("issue connecting to AWS %s" % e, "critical")
+            exit("[!] issue connecting to AWS: %s" % e)
         # set it
         self.instance = self.getInstanceByID(instance_id)
         # verify the instance

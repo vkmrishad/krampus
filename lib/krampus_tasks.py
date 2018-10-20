@@ -97,7 +97,8 @@ class KTask():
                 )
             else:
                 # something... else
-                KLog.log("at least one call failed for %s, please check logs" % self.job_params['arn'].arn_str, "critical")
+                KLog.log("at least one call failed for %s, please check logs" % self.job_params['arn'].arn_str,
+                         "critical")
 
         def complete(self):
             # now we go through and see what type of action and object and call the appropriate kinder methods
@@ -110,10 +111,12 @@ class KTask():
                     KLog.log("deleting ebs volume with id: %s" % ebs_volume, "info")
                     resp = ebs.EBS(ebs_volume, self.aws_region, self.session).kill()
                 elif self.action == "disable":
-                    KLog.log("'disable' action makes no sense for EBS volume: %s, will be deleted instead" % ebs_volume, "warn")
+                    KLog.log("'disable' action makes no sense for EBS volume: %s, will be deleted instead" % ebs_volume,
+                             "warn")
                     resp = ebs.EBS(ebs_volume, self.aws_region, self.session).kill()
                 else:
-                    KLog.log("did not understand action '%s' for ebs job type on %s" % (self.action, ebs_volume), "critical")
+                    KLog.log("did not understand action '%s' for ebs job type on %s" % (self.action, ebs_volume),
+                             "critical")
                     resp = None
                 self.responseHandler(resp)
             # security group job
@@ -131,7 +134,9 @@ class KTask():
                         self.job_params['proto']
                     )
                 else:
-                    KLog.log("did not understand action '%s' for secgroup job type on %s" % (self.action, security_group_id), "critical")
+                    KLog.log(
+                        "did not understand action '%s' for secgroup job type on %s" % (self.action, security_group_id),
+                        "critical")
                     resp = None
                 self.responseHandler(resp)
             # standard ec2 instance job
@@ -144,7 +149,8 @@ class KTask():
                     KLog.log("deleting ec2 instance: %s" % ec2_instance)
                     resp = ec2.EC2(ec2_instance, self.aws_region, self.session).kill()
                 else:
-                    KLog.log("did not understand action '%s' for ec2 job type on %s" % (self.action, ec2_instance), "critical")
+                    KLog.log("did not understand action '%s' for ec2 job type on %s" % (self.action, ec2_instance),
+                             "critical")
                     resp = None
                 self.responseHandler(resp)
             # s3 job
@@ -154,9 +160,12 @@ class KTask():
                 try:
                     s3_permissions = self.job_params[KEYS['s3_permission']]
                     s3_principal = self.job_params[KEYS['s3_principal']]
-                    s3_principal_type = "Group" if self.job_params[KEYS['s3_principal']].find("http") > -1 else "CanonicalUser"
+                    s3_principal_type = "Group" if self.job_params[KEYS['s3_principal']].find(
+                        "http") > -1 else "CanonicalUser"
                 except KeyError:
-                    KLog.log("s3 job %s was not passed with principal and permission info - all perms will be removed" % bucket, "warn")
+                    KLog.log(
+                        "s3 job %s was not passed with principal and permission info - all perms will be removed" % bucket,
+                        "warn")
                     remove_all = True
                 if self.action == "disable" and not remove_all:
                     KLog.log(
@@ -181,7 +190,8 @@ class KTask():
                     KLog.log("disabling iam object: %s" % iam_obj)
                     resp = iam.IAM(iam_obj, self.session, self.aws_region).disable()
                 else:
-                    KLog.log("did not understand action '%s' for iam job type on %s" % (self.action, iam_obj), "critical")
+                    KLog.log("did not understand action '%s' for iam job type on %s" % (self.action, iam_obj),
+                             "critical")
                     resp = None
                 self.responseHandler(resp)
             # rds job
@@ -194,7 +204,8 @@ class KTask():
                     KLog.log("'kill' action too dangerous for rds job: %s, will be dequeued" % rds_instance, "critical")
                     resp = None  # will cause responseHandler to dequeue this job
                 else:
-                    KLog.log("did not understand action '%s' for rds job type on %s" % (self.action, rds_instance), "critical")
+                    KLog.log("did not understand action '%s' for rds job type on %s" % (self.action, rds_instance),
+                             "critical")
                     resp = None
                 self.responseHandler(resp)
             # lambda job
@@ -207,10 +218,12 @@ class KTask():
                 elif self.action == "kill":
                     resp = lambda_funcs.Lambda(func_name, self.aws_region, self.session).kill()
                 else:
-                    KLog.log("did not understand action '%s' for lambda job '%s'" % (self.action, func_name), "critical")
+                    KLog.log("did not understand action '%s' for lambda job '%s'" % (self.action, func_name),
+                             "critical")
                     resp = None
                 # send it back
                 self.responseHandler(resp)
+
     # end task class
 
     # ktask ARN utils
@@ -230,6 +243,7 @@ class KTask():
             # special cases
             if self.service == "rds" or self.service == "lambda":
                 self.resource = arn[6]  # deal with the resource:resource_name scheme we get for these guys
+
     # end ARN class
 
     # I WANT THE TASKS
@@ -239,7 +253,7 @@ class KTask():
         try:  # we'll actually want to save this for later to rebuild task list
             self.json_data = json.load(self.bucket.Object(key).get()['Body'])
         except ClientError as e:
-            KLog.log("failed to download tasks file: %s" % str(e), "critical")
+            KLog.log("failed to download tasks file: %s" % e, "critical")
             exit()
         for job in self.json_data['tasks']:
             # resolve the arn
@@ -265,8 +279,8 @@ class KTask():
             opts['krampus_role'] = self.krampus_role
             # task obj if/else series determines how the additional args outside action etc used
             t = KTask.Task(opts)
-            if (obj_type not in SERVICES):
-                KLog.log("got unrecognized aws object type: " + obj_type, "warn")
+            if obj_type not in SERVICES:
+                KLog.log("got unrecognized aws object type: %s" % obj_type, "warn")
                 continue  # don't append a non-existant task brah
             # add it to the list of things to action on
             # save json representation for convenience
@@ -291,5 +305,5 @@ class KTask():
         updated_json = json.dumps(updated_json)
         # put it to the bucket
         resp = self.bucket.Object(self.key).put(Body=updated_json)
-        KLog.log("done updating tasks list: " + self.key, "info")
+        KLog.log("done updating tasks list: %s" % self.key, "info")
         return resp

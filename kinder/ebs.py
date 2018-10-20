@@ -19,8 +19,8 @@ class EBS():
         try:
             self.conn = sess.resource("ec2", region_name=region)
         except Exception as e:
-            KLog.log("issue connecting to AWS %s" % str(e), "critical")
-            exit("[!] issue connecting to AWS: %s" % str(e))
+            KLog.log("issue connecting to AWS %s" % e, "critical")
+            exit("[!] issue connecting to AWS: %s" % e)
         # get volume reference
         self.volume = self.conn.Volume(volume_id)
         self.region = region

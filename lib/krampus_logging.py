@@ -41,7 +41,8 @@ class KLog(object):
             "warn": "[-]",
             "critical": "[!]"
         }
-        print "%s %s" % (prepends[level], msg)
+        print
+        "%s %s" % (prepends[level], msg)
         # see if it should go to the hipchat room
         if level == "critical":
             KLog.hipLog(msg)
@@ -60,7 +61,7 @@ class KLog(object):
             KLog.log("tried to log to hipchat without a working connection", "warn")
             return False
         # otherwise let's set as red
-        hc_room.notification("KRAMPUS: " + msg, "red")
+        hc_room.notification("KRAMPUS: %s" % msg, "red")
 
     # write the final product
     def writeLogFile(self):
