@@ -33,5 +33,6 @@ class Lambda():
             if str(e).find("ResourceNotFoundException") is not -1:
                 KLog.log("could not find function '%s', dequeueing task" % self.func)
             else:
-                KLog.log("could not delete function '%s', unknown error: %s" % e, "critical")
+                KLog.log("could not delete function '%s', unknown error: %s" % (self.func, e), "critical")
+                
             return None
