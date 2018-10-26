@@ -34,5 +34,4 @@ class Lambda():
                 KLog.log("could not find function '%s', dequeueing task" % self.func)
             else:
                 KLog.log("could not delete function '%s', unknown error: %s" % (self.func, e), "critical")
-                
             return None
